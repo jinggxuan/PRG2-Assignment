@@ -20,7 +20,14 @@ namespace prg2_final_assgn
             SupportsCFFT = supportsCFFT;
             SupportsDDJB = supportsDDJB;
             SupportsLWTT = supportsLWTT;
-            Flight = null;
+            Flight = null; 
+        }
+
+        public override string ToString()
+        {
+            var status = Flight == null ? "No flight assigned" : $"Assigned to flight {Flight.FlightNumber}";
+            return $"Gate {GateName} - Supports: " +
+                   $"CFFT({SupportsCFFT}), DDJB({SupportsDDJB}), LWTT({SupportsLWTT}) - {status}";
         }
     }
 }

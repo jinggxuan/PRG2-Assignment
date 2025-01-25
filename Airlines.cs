@@ -16,6 +16,11 @@ namespace prg2_final_assgn
             Code = code;
             Name = name;
         }
+
+        public override string ToString()
+        {
+            return $"{Code}: {Name}";
+        }
     }
 }
 
