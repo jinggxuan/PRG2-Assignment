@@ -16,22 +16,21 @@ namespace prg2_final_assgn
         {
             Name = name;
             Code = code;
-            Flights = new Dictionary<string, Flight>();
+            Flights = flights ?? new Dictionary<string, Flight>(); // Ensure it's not null
         }
 
         public bool AddFlight(Flight flight)
         {
-            // add flight into dictionary Flights, and adds Flight into flights.csv
-            // if successful, returns true
-            Flights[flight.FlightNumber] = flight;
-            return true;
+            if (!Flights.ContainsKey(flight.FlightNumber))
+            {
+                Flights[flight.FlightNumber] = flight;
+                return true;
+            }
+            return false; // Return false if flight already exists
         }
 
         public double CalculateFees()
         {
-            // calculates total fees of airlines for all the flights under it
-            // includes discounts
-            // use Flight.CalculateFees
             double totalFees = 0;
             foreach (var flight in Flights.Values)
             {
@@ -40,18 +39,20 @@ namespace prg2_final_assgn
             return totalFees;
         }
 
-
         public bool RemoveFlight(Flight flight)
         {
-            // goes through dictionary to check whether this flight exists
-            // removes flight if it exists, returns true
-            Flights.Remove(flight.FlightNumber);
-            return true;
+            if (Flights.ContainsKey(flight.FlightNumber))
+            {
+                Flights.Remove(flight.FlightNumber);
+                return true;
+            }
+            return false; // Return false if flight does not exist
         }
 
         public override string ToString()
         {
-            return $"Name: {Name} \t Code: {Code} \t Flight: {Flights}";
+            string flightsInfo = string.Join(", ", Flights.Values);
+            return $"Name: {Name} \t Code: {Code} \t Flights: [{flightsInfo}]";
         }
     }
 }
