@@ -32,6 +32,8 @@ namespace prg2_final_assgn
         // if successful, returns true
         // stores new gate in GateFees with the total amount to use the gate?
         {
+            GateFees[gate.GateName] = gate.CalculateFees();
+            return true;
         }
 
         public Airline GetAirlineFromFlight(string flightNumber)
