@@ -14,26 +14,21 @@ namespace prg2_final_assgn
         public Terminal(string terminalName, Dictionary<string, Airline> airlines, Dictionary<string, Flight> flights, Dictionary<string, double> gateFees)
         {
             TerminalName = terminalName;
-            Airlines = new Dictionary<string, Airline>();
-            Flights = new Dictionary<string, Flight>();
-            GateFees = new Dictionary<string, double>();
+            Airlines = airlines ?? new Dictionary<string, Airline>();
+            Flights = flights ?? new Dictionary<string, Flight>();
+            GateFees = gateFees ?? new Dictionary<string, double>();
         }
 
         public bool AddAirline(Airline airline)
-        // takes in input of Airline name and code, adds them into the airlines.csv
-        // if successful, add airline to dictionary and return true
         {
-            Airlines.Add(airline.Code, airline);
-            return true;
-        }
-
-        public bool AddBoardingGate(BoardingGate gate)
-        // adds boarding gate to boardinggate.csv
-        // if successful, returns true
-        // stores new gate in GateFees with the total amount to use the gate?
-        {
-            GateFees[gate.GateName] = gate.CalculateFees();
-            return true;
+            // takes in input of Airline name and code, adds them into the airlines.csv
+            // if successful, add airline to dictionary and return true
+            if (!Airlines.ContainsKey(airline.Code))
+            {
+                Airlines.Add(airline.Code, airline);
+                return true;
+            }
+            return false; // Prevent duplicate airline entries
         }
 
         public Airline GetAirlineFromFlight(string flightNumber)
