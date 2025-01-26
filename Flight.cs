@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace prg2_final_assgn
 {
-    public class Flight
+    class Flight
     {
         public string FlightNumber { get; set; }
         public string Origin { get; set; }
@@ -23,7 +23,18 @@ namespace prg2_final_assgn
         }
         public virtual double CalculateFees()
         {
-            return Destination == "Singapore (SIN)" ? 500 : 800;
+            if (Destination == "Singapore (SIN)")
+            {
+                return 500;
+            }
+            else if (Origin == "Singapore (SIN)")
+            {
+                return 800;
+            }
+            else 
+            { 
+                return 0; 
+            }
         }
 
         public override string ToString()
