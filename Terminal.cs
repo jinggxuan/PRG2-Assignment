@@ -52,7 +52,7 @@ namespace prg2_final_assgn
             }
         }
 
-        public string override ToString()
+        public override string ToString()
         {
             return $"Terminal Name: {TerminalName} \tAirlines: {Airlines} \tFlights: {Flights} \tGate Fees {GateFees}";
         }
