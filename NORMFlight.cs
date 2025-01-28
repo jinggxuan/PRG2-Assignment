@@ -1,14 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace prg2_final_assgn
+//==========================================================
+// Student Number	: S10266823
+// Student Name	: Maniar Naisha Keyur
+// Partner Name	: Wong Jing Xuan
+//==========================================================
+
+namespace S10266823_PRG2Assignment
 {
-    public class NORMFlight : Flight
+    class NORMFlight : Flight
     {
-        public NORMFlight(string flightNumber, string origin, string destination, DateTime expectedTime) : base(flightNumber, origin, destination, expectedTime) { };
+        public NORMFlight(string flightNumber, string origin, string destination, DateTime expectedTime) : base(flightNumber, origin, destination, expectedTime) { }
         public double CalculateFees()
         {
             return base.CalculateFees();
