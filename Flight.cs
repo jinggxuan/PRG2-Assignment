@@ -1,10 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace prg2_final_assgn
+//==========================================================
+// Student Number	: S10266823
+// Student Name	: Maniar Naisha Keyur
+// Partner Name	: Wong Jing Xuan
+//==========================================================
+
+namespace S10266823_PRG2Assignment
 {
     class Flight
     {
@@ -31,15 +37,15 @@ namespace prg2_final_assgn
             {
                 return 800;
             }
-            else 
-            { 
-                return 0; 
+            else
+            {
+                return 0;
             }
         }
 
         public override string ToString()
         {
-            return $"Flight Number: {FlightNumber} \tOrigin: {Origin} \tDestination: {Destination} \tExpected Time: {ExpectedTime} \tStatus: {Status}";
+            return $"Flight Number: {FlightNumber} \tOrigin: {Origin} \nDestination: {Destination} \tExpected Time: {ExpectedTime} ";
 
         }
     }
