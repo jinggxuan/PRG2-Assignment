@@ -1,21 +1,29 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace prg2_final_assgn
+//==========================================================
+// Student Number	: S10266823
+// Student Name	: Maniar Naisha Keyur
+// Partner Name	: Wong Jing Xuan
+//==========================================================
+
+namespace S10266823_PRG2Assignment
 {
     class Terminal
     {
         public string TerminalName { get; set; }
         public Dictionary<string, Airline> Airlines { get; set; }
         public Dictionary<string, Flight> Flights { get; set; }
+        public Dictionary<string, BoardingGate> BoardingGates { get; set; }
         public Dictionary<string, double> GateFees { get; set; }
 
-        public Terminal(string terminalName, Dictionary<string, Airline> airlines, Dictionary<string, Flight> flights, Dictionary<string, double> gateFees)
+        public Terminal(string terminalName, Dictionary<string, Airline> airlines, Dictionary<string, Flight> flights, Dictionary<string, BoardingGate> boardingGate, Dictionary<string, double> gateFees)
         {
             TerminalName = terminalName;
             Airlines = airlines ?? new Dictionary<string, Airline>();
             Flights = flights ?? new Dictionary<string, Flight>();
+            BoardingGates = boardingGate ?? new Dictionary<string, BoardingGate>();
             GateFees = gateFees ?? new Dictionary<string, double>();
         }
 
