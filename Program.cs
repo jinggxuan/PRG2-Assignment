@@ -147,3 +147,21 @@ foreach (var flight in terminal.Flights.Values)
 {
     Console.WriteLine(flight);
 }
+
+// List all boarding gates
+void DisplayBoardingGates(Dictionary<string, BoardingGate> boardingGates)
+{
+    Console.WriteLine($"{"Gate Name",-15} {"DDJB",-10} {"CFFT",-10} {"LWTT",-10}");
+    foreach (KeyValuePair<string, BoardingGate> kvp in boardingGates)
+    {
+        BoardingGate boardingGate = kvp.Value;
+        Console.WriteLine($"{boardingGate.GateName,-15} {boardingGate.SupportsDDJB,-10} {boardingGate.SupportsCFFT,-10} {boardingGate.SupportsLWTT,-10}");
+    }
+}
+LoadBoardingGates(terminal.BoardingGates, terminal.GateFees);
+DisplayBoardingGates(terminal.BoardingGates);
+
+foreach (var flight in terminal.Flights.Values)
+{
+    Console.WriteLine(flight);
+}
