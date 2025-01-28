@@ -4,8 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace prg2_final_assgn
-{
+//==========================================================
+// Student Number	: S10266823
+// Student Name	: Maniar Naisha Keyur
+// Partner Name	: Wong Jing Xuan
+//==========================================================
+
+namespace S10266823_PRG2Assignment
 {
     class BoardingGate
     {
@@ -26,12 +31,16 @@ namespace prg2_final_assgn
 
         public double CalculateFees()
         {
-            double baseFee = 300;
-            if (Flight is CFFTFlight) baseFee += 150;
-            if (Flight is DDJBFlight) baseFee += 300;
-            if (Flight is LWTTFlight) baseFee += 500;
-            return baseFee;
+            if (Flight == null) return 0; // No flight assigned to this gate
+
+            double gateFee = 300;
+            if (Flight is CFFTFlight) gateFee += 150;
+            if (Flight is DDJBFlight) gateFee += 300;
+            if (Flight is LWTTFlight) gateFee += 500;
+
+            return gateFee;
         }
+
 
         public override string ToString()
         {
