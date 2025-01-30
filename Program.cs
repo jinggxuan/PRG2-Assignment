@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using S10266823_PRG2Assignment;
 
 //==========================================================
@@ -95,24 +96,39 @@ void LoadFlights(Dictionary<string, Flight> flights, Dictionary<string, Airline>
 
             if (flightData.Length >= 4) // Ensure at least Origin, Destination, Expected Time, and Flight Number
             {
+                string flightNumber = flightData[0].Trim();
                 string origin = flightData[1].Trim();
                 string destination = flightData[2].Trim();
-                DateTime expectedTime = DateTime.Parse(flightData[3].Trim());
-                string specialRequest = flightData.Length >= 5 ? flightData[4].Trim() : ""; // Optional Special Request
+                string dateString = flightData[3].Trim(); // Expected time as string
 
-                string flightNumber = flightData[0].Trim(); // Flight Number from CSV
+                // Define possible DateTime formats in flights.csv
+                string[] validFormats = {
+                    "dd/MM/yyyy HH:mm",    // Example: 25/01/2025 14:30
+                    "MM/dd/yyyy HH:mm",    // Example: 01/25/2025 14:30
+                    "yyyy-MM-dd HH:mm:ss", // Example: 2025-01-25 14:30:00
+                    "yyyy/MM/dd HH:mm",    // Example: 2025/01/25 14:30
+                    "h:mm tt",             // Example: 9:30 PM 
+                    "hh:mm tt"             // Example: 11:45 AM 
+                };
 
-                // Extract Airline Code from Flight Number (first two letters)
-                if (flightNumber.Length < 6)
+                // Try parsing with the expected formats
+                if (string.IsNullOrEmpty(dateString))
                 {
-                    Console.WriteLine($"Warning: Invalid flight number '{flightNumber}'. Skipping entry.");
-                    continue;
+                    Console.WriteLine($"Warning: Missing expected time for flight '{flightNumber}'. Skipping entry.");
+                    continue; // Skip this flight entry
                 }
-                string airlineCode = flightNumber.Substring(0, 2); // First two characters
 
+                if (!DateTime.TryParseExact(dateString, validFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime expectedTime))
+                {
+                    Console.WriteLine($"Warning: Invalid date format '{dateString}' for flight '{flightNumber}'. Skipping entry.");
+                    continue; // Skip invalid entries
+                }
+
+                string specialRequest = flightData.Length >= 5 ? flightData[4].Trim() : ""; // Optional Special Request
+                string airlineCode = flightNumber.Substring(0, 2); // Extract first two characters as airline code
+
+                // Using long-form switch statement
                 Flight flight;
-
-                // Assign correct flight type based on Special Request
                 switch (specialRequest)
                 {
                     case "CFFT":
@@ -129,10 +145,8 @@ void LoadFlights(Dictionary<string, Flight> flights, Dictionary<string, Airline>
                         break;
                 }
 
-                // Add to global flights dictionary
                 flights[flightNumber] = flight;
 
-                // Ensure the airline exists before adding the flight
                 if (airlines.ContainsKey(airlineCode))
                 {
                     airlines[airlineCode].Flights[flightNumber] = flight;
@@ -144,8 +158,10 @@ void LoadFlights(Dictionary<string, Flight> flights, Dictionary<string, Airline>
             }
         }
     }
-    Console.WriteLine("Flights loaded and linked to airlines successfully.");
+    Console.WriteLine("Flights loaded successfully.");
 }
+
+
 
 
 // List all boarding gates
@@ -340,7 +356,7 @@ void AssignBoardingGateToFlight(Dictionary<string, Flight> flights, Dictionary<s
 }
 
 
-// AssignBoardingGateToFlight(terminal.Flights, terminal.BoardingGates, specialRequests);
+AssignBoardingGateToFlight(terminal.Flights, terminal.BoardingGates, specialRequests);
 
 
 void CreateNewFlight(Dictionary<string, Flight> flights, string flightsCsvPath)
@@ -461,6 +477,5 @@ void CreateNewFlight(Dictionary<string, Flight> flights, string flightsCsvPath)
         }
     }
 }
-
 
 CreateNewFlight(terminal.Flights, "flights.csv");
