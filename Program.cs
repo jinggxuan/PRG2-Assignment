@@ -1,6 +1,9 @@
 using System;
+using System.Diagnostics.Metrics;
 using System.Globalization;
+using Microsoft.VisualBasic;
 using S10266823_PRG2Assignment;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 //==========================================================
 // Student Number	: S10266823
@@ -480,126 +483,160 @@ void CreateNewFlight(Dictionary<string, Flight> flights, string flightsCsvPath)
 
 CreateNewFlight(terminal.Flights, "flights.csv");
 
-void ModifyFlightDetails(Dictionary<string, Airline> airlines, Dictionary<string, string> specialRequests, Dictionary<string, string> gateAssignments)
+
+void DisplayFlightDetailsFromAirline(Dictionary<string, Airline> airlines, Dictionary<string, string> specialRequests, Dictionary<string, string> gateAssignments)
 {
-    // List all Airlines
-    Console.WriteLine("Available Airlines:");
+    // List all available airlines
+    Console.WriteLine("\nAvailable Airlines:");
     foreach (var airline in airlines.Values)
     {
-        Console.WriteLine($"Airline Name: {airline.Name}, Airline Code: {airline.Code}");
+        Console.WriteLine($"{airline.Code} - {airline.Name}");
     }
 
-    // Prompt user to enter the 2-letter airline code
-    string airlineCode;
-    Airline selectedAirline;
-    while (true)
-    {
-        Console.Write("Enter 2-Letter Airline Code: ");
-        airlineCode = Console.ReadLine()?.Trim().ToUpper();
+    // Prompt the user to select an airline by code
+    Console.Write("\nEnter 2-letter Airline Code (e.g., SQ or MH): ");
+    string airlineCode = Console.ReadLine()?.Trim().ToUpper();
 
-        if (!string.IsNullOrEmpty(airlineCode) && airlines.TryGetValue(airlineCode, out selectedAirline))
+    if (airlines.TryGetValue(airlineCode, out Airline selectedAirline))
+    {
+        Console.WriteLine($"\nFlights for Airline {selectedAirline.Name} ({selectedAirline.Code}):");
+
+        // Display each flight's details
+        foreach (var flight in selectedAirline.Flights.Values)
         {
-            break; 
+            Console.WriteLine($"Flight Number: {flight.FlightNumber}, Origin: {flight.Origin}, Destination: {flight.Destination}");
+        }
+
+        // Prompt to select a flight number
+        Console.Write("\nEnter Flight Number to view details: ");
+        string flightNumber = Console.ReadLine()?.Trim();
+
+        if (selectedAirline.Flights.TryGetValue(flightNumber, out Flight selectedFlight))
+        {
+            Console.WriteLine("\nFlight Details:");
+            Console.WriteLine($"Flight Number: {selectedFlight.FlightNumber}");
+            Console.WriteLine($"Airline: {selectedAirline.Name}");
+            Console.WriteLine($"Origin: {selectedFlight.Origin}");
+            Console.WriteLine($"Destination: {selectedFlight.Destination}");
+            Console.WriteLine($"Expected Time: {selectedFlight.ExpectedTime:dd/MM/yyyy HH:mm}");
+            Console.WriteLine($"Status: {selectedFlight.Status}");
+            Console.WriteLine($"Special Request Code: {(specialRequests.ContainsKey(flightNumber) ? specialRequests[flightNumber] : "None")}");
+            Console.WriteLine($"Boarding Gate: {(gateAssignments.ContainsKey(flightNumber) ? gateAssignments[flightNumber] : "Not assigned")}");
         }
         else
         {
-            Console.WriteLine("Error: Airline not found. Please enter a valid airline code.");
-        }
-    }
-
-    // Display flights for the selected airline
-    Console.WriteLine($"Flights for Airline {selectedAirline.Name}:");
-    foreach (var flight in selectedAirline.Flights.Values)
-    {
-        Console.WriteLine($"Flight Number: {flight.FlightNumber}, Origin: {flight.Origin}, Destination: {flight.Destination}");
-    }
-
-    // Prompt user to select an action
-    Console.Write("Enter [1] to modify a flight or [2] to delete a flight: ");
-    string action = Console.ReadLine()?.Trim();
-
-    if (action == "1")
-    {
-        // Modify existing flight
-        string flightNumber;
-        Flight selectedFlight;
-        while (true)
-        {
-            Console.Write("Enter Flight Number to modify: ");
-            flightNumber = Console.ReadLine()?.Trim();
-
-            if (!string.IsNullOrEmpty(flightNumber) && selectedAirline.Flights.TryGetValue(flightNumber, out selectedFlight))
-            {
-                break; 
-            }
-            else
-            {
-                Console.WriteLine("Error: Flight not found. Please enter a valid flight number.");
-            }
-        }
-
-        // Prompt for new information
-        Console.Write("Enter new Origin: ");
-        selectedFlight.Origin = Console.ReadLine()?.Trim();
-
-        Console.Write("Enter new Destination: ");
-        selectedFlight.Destination = Console.ReadLine()?.Trim();
-
-        Console.Write("Enter new Expected Departure/Arrival Time (e.g., 01/29/2025 10:30 AM): ");
-        string expectedTimeStr = Console.ReadLine()?.Trim();
-        if (DateTime.TryParse(expectedTimeStr, out DateTime expectedTime))
-        {
-            selectedFlight.ExpectedTime = expectedTime;
-        }
-        else
-        {
-            Console.WriteLine("Error: Invalid date format. Keeping the old Expected Time.");
-        }
-
-        Console.WriteLine("\nFlight details updated successfully.");
-    }
-    else if (action == "2")
-    {
-        // Delete existing flight
-        string flightNumber;
-        while (true)
-        {
-            Console.Write("Enter Flight Number to delete: ");
-            flightNumber = Console.ReadLine()?.Trim();
-
-            if (!string.IsNullOrEmpty(flightNumber) && selectedAirline.Flights.ContainsKey(flightNumber))
-            {
-                break; 
-            }
-            else
-            {
-                Console.WriteLine("Error: Flight not found. Please enter a valid flight number.");
-            }
-        }
-
-        Console.Write("Are you sure you want to delete this flight? (Y/N): ");
-        string confirmation = Console.ReadLine()?.Trim().ToUpper();
-
-        if (confirmation == "Y")
-        {
-            selectedAirline.Flights.Remove(flightNumber);
-            Console.WriteLine("Flight deleted successfully.");
-        }
-        else
-        {
-            Console.WriteLine("Flight deletion canceled.");
+            Console.WriteLine("Error: Flight not found.");
         }
     }
     else
     {
-        Console.WriteLine("Error: Invalid action. Please enter 1 or 2.");
-    }
-
-    // Display the new updated flight details
-    Console.WriteLine("\nUpdated Flight Details:");
-    foreach (var flight in selectedAirline.Flights.Values)
-    {
-        Console.WriteLine($"Flight Number: {flight.FlightNumber}, Airline Name: {selectedAirline.Name}, Origin: {flight.Origin}, Destination: {flight.Destination}, Expected Time: {flight.ExpectedTime}, Status: {flight.Status}, Special Request: {specialRequests.GetValueOrDefault(flight.FlightNumber, "None")}, Boarding Gate: {gateAssignments.GetValueOrDefault(flight.FlightNumber, "None")}");
+        Console.WriteLine("Error: Airline code not found.");
     }
 }
 
+void ModifyFlightDetails(Dictionary<string, Airline> airlines, Dictionary<string, string> specialRequests, Dictionary<string, string> gateAssignments)
+{
+    Console.WriteLine("\nAvailable Airlines:");
+    foreach (var airline in airlines.Values)
+    {
+        Console.WriteLine($"{airline.Code} - {airline.Name}");
+    }
+
+    Console.Write("\nEnter 2-letter Airline Code (e.g., SQ or MH): ");
+    string airlineCode = Console.ReadLine()?.Trim().ToUpper();
+
+    if (airlines.TryGetValue(airlineCode, out Airline selectedAirline))
+    {
+        Console.WriteLine($"\nFlights for Airline {selectedAirline.Name} ({selectedAirline.Code}):");
+        foreach (var flight in selectedAirline.Flights.Values)
+        {
+            Console.WriteLine($"Flight Number: {flight.FlightNumber}, Origin: {flight.Origin}, Destination: {flight.Destination}");
+        }
+
+        Console.Write("\nEnter Flight Number to Modify or Delete: ");
+        string flightNumber = Console.ReadLine()?.Trim();
+
+        if (selectedAirline.Flights.TryGetValue(flightNumber, out Flight selectedFlight))
+        {
+            Console.WriteLine("\nChoose an option:");
+            Console.WriteLine("1. Modify flight details");
+            Console.WriteLine("2. Delete flight");
+            Console.Write("Enter your choice (1 or 2): ");
+            string choice = Console.ReadLine()?.Trim();
+
+            if (choice == "1")
+            {
+                Console.WriteLine("\nSelect the field to modify:");
+                Console.WriteLine("1. Origin");
+                Console.WriteLine("2. Destination");
+                Console.WriteLine("3. Expected Departure Time");
+                Console.WriteLine("4. Status");
+                Console.WriteLine("5. Special Request Code");
+                Console.WriteLine("6. Boarding Gate");
+                Console.Write("Enter your choice (1-6): ");
+                string modifyChoice = Console.ReadLine()?.Trim();
+
+                switch (modifyChoice)
+                {
+                    case "1":
+                        Console.Write("Enter new Origin: ");
+                        selectedFlight.Origin = Console.ReadLine()?.Trim();
+                        break;
+                    case "2":
+                        Console.Write("Enter new Destination: ");
+                        selectedFlight.Destination = Console.ReadLine()?.Trim();
+                        break;
+                    case "3":
+                        Console.Write("Enter new Expected Departure Time (dd/MM/yyyy HH:mm): ");
+                        string timeInput = Console.ReadLine()?.Trim();
+                        if (DateTime.TryParse(timeInput, out DateTime newTime))
+                        {
+                            selectedFlight.ExpectedTime = newTime;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid date format.");
+                        }
+                        break;
+                    case "4":
+                        Console.Write("Enter new Status (Delayed/Boarding/On Time): ");
+                        selectedFlight.Status = Console.ReadLine()?.Trim();
+                        break;
+                    case "5":
+                        Console.Write("Enter new Special Request Code (CFFT/DDJB/LWTT/None): ");
+                        specialRequests[selectedFlight.FlightNumber] = Console.ReadLine()?.Trim().ToUpper();
+                        break;
+                    case "6":
+                        Console.Write("Enter new Boarding Gate: ");
+                        gateAssignments[selectedFlight.FlightNumber] = Console.ReadLine()?.Trim();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+                }
+            }
+            else if (choice == "2")
+            {
+                Console.Write("Are you sure you want to delete this flight? (Y/N): ");
+                string confirmation = Console.ReadLine()?.Trim().ToUpper();
+                if (confirmation == "Y")
+                {
+                    selectedAirline.Flights.Remove(flightNumber);
+                    Console.WriteLine($"Flight {flightNumber} deleted successfully.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Error: Flight not found.");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Error: Airline code not found.");
+    }
+}
