@@ -13,15 +13,18 @@ using System.Threading.Tasks;
 
 namespace S10266823_PRG2Assignment
 {
-    class CFFTFlight : Flight
+    public class CFFTFlight : Flight
     {
         public double RequestFee { get; set; } = 150;
+
         public CFFTFlight(string flightNumber, string origin, string destination, DateTime expectedTime)
-       : base(flightNumber, origin, destination, expectedTime) { }
+            : base(flightNumber, origin, destination, expectedTime) { }
 
         public override double CalculateFees()
         {
-            return base.CalculateFees() + RequestFee;
+            double fees = base.CalculateFees();
+            fees += RequestFee;  // Add the special request fee for CFFT
+            return fees;
         }
 
         public override string ToString()
