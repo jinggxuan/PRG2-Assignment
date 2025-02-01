@@ -687,3 +687,79 @@ void DisplayFlightSchedule(Dictionary<string, Airline> airlines, Dictionary<stri
 
 
 DisplayFlightSchedule(terminal.Airlines, specialRequests, gateAssignments);
+
+void ProcessUnassignedFlights(Dictionary<string, Flight> flights, Dictionary<string, BoardingGate> boardingGates, Dictionary<string, Airline> airlines)
+{
+    Queue<Flight> flightQueue = new Queue<Flight>();
+    int unassignedFlightsCount = 0;
+    int unassignedGatesCount = 0;
+
+    // Collect unassigned flights
+    foreach (var flight in flights.Values)
+    {
+        bool isAssigned = boardingGates.Values.Any(gate => gate.Flight != null && gate.Flight.FlightNumber == flight.FlightNumber);
+        if (!isAssigned)
+        {
+            flightQueue.Enqueue(flight);
+            unassignedFlightsCount++;
+        }
+    }
+    Console.WriteLine($"Total number of Flights that do not have any Boarding Gate assigned yet: {unassignedFlightsCount}");
+
+    // Collect unassigned gates
+    foreach (var gate in boardingGates.Values)
+    {
+        if (gate.Flight == null)
+        {
+            unassignedGatesCount++;
+        }
+    }
+    Console.WriteLine($"Total number of Boarding Gates that do not have a Flight Number assigned yet: {unassignedGatesCount}");
+
+    int totalProcessedFlights = 0;
+    int totalProcessedGates = 0;
+
+    // Assign flights to gates
+    while (flightQueue.Count > 0)
+    {
+        Flight currentFlight = flightQueue.Dequeue();
+        BoardingGate? assignedGate = boardingGates.Values.FirstOrDefault(gate => gate.Flight == null);
+
+        // Check for special request
+        if (currentFlight is CFFTFlight || currentFlight is DDJBFlight || currentFlight is LWTTFlight)
+        {
+            assignedGate = boardingGates.Values.FirstOrDefault(gate =>
+                gate.Flight == null && (
+                    (currentFlight is CFFTFlight && gate.SupportsCFFT) ||
+                    (currentFlight is DDJBFlight && gate.SupportsDDJB) ||
+                    (currentFlight is LWTTFlight && gate.SupportsLWTT))
+            ) ?? assignedGate;
+        }
+
+        if (assignedGate != null)
+        {
+            assignedGate.Flight = currentFlight;
+            totalProcessedFlights++;
+            totalProcessedGates++;
+            Console.WriteLine("\nFlight Details: ");
+            Console.WriteLine($"Flight Number: {currentFlight.FlightNumber}");
+            if (airlines.TryGetValue(currentFlight.FlightNumber.Substring(0, 2), out Airline airline))
+            {
+                Console.WriteLine($"Airline Name: {airline.Name}");
+            }
+            Console.WriteLine($"Origin: {currentFlight.Origin}");
+            Console.WriteLine($"Destination: {currentFlight.Destination}");
+            Console.WriteLine($"Expected Departure/Arrival Time: {currentFlight.ExpectedTime:dd/MM/yyyy hh:mm:ss tt}");
+            Console.WriteLine($"Special Request Code: {(currentFlight is CFFTFlight ? "CFFT" : (currentFlight is DDJBFlight ? "DDJB" : (currentFlight is LWTTFlight ? "LWTT" : "None")))}");
+            Console.WriteLine($"Boarding Gate: {assignedGate.GateName}");
+        }
+    }
+
+    Console.WriteLine($"Total number of Flights processed and assigned: {totalProcessedFlights}");
+    Console.WriteLine($"Total number of Boarding Gates processed and assigned: {totalProcessedGates}");
+
+    double percentage = (double)(totalProcessedFlights + totalProcessedGates) / (flights.Count + boardingGates.Count) * 100;
+    Console.WriteLine($"Percentage of Flights and Boarding Gates processed automatically: {percentage:F2}%");
+}
+
+//ProcessUnassignedFlights(airlines, specialRequests, gateAssignments);
