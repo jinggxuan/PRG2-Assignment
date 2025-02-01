@@ -14,14 +14,18 @@ using System.Threading.Tasks;
 
 namespace S10266823_PRG2Assignment
 {
-    class DDJBFlight : Flight
+    public class DDJBFlight : Flight
     {
         public double RequestFee { get; set; } = 300;
+
         public DDJBFlight(string flightNumber, string origin, string destination, DateTime expectedTime)
-        : base(flightNumber, origin, destination, expectedTime) { }
+            : base(flightNumber, origin, destination, expectedTime) { }
+
         public override double CalculateFees()
         {
-            return base.CalculateFees() + RequestFee;
+            double fees = base.CalculateFees();
+            fees += RequestFee;  // Add the special request fee for DDJB
+            return fees;
         }
 
         public override string ToString()
