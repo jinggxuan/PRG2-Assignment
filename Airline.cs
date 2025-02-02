@@ -28,60 +28,39 @@ namespace S10266823_PRG2Assignment
 
         public bool AddFlight(Flight flight)
         {
+            // Check if the flight number is already in the collection
             if (!Flights.ContainsKey(flight.FlightNumber))
             {
-                Flights[flight.FlightNumber] = flight;
-                return true;
+                Flights[flight.FlightNumber] = flight; // Add the flight if it doesn't exist
+                return true; // Indicate that the flight was added successfully
             }
-            return false;  // Return false if flight already exists
+            return false;  // Return false if the flight already exists in the collection
         }
 
+        // Method to calculate the total fees for all flights of the airline
         public double CalculateFees()
         {
-            double totalFees = 0;
+            double totalFees = 0;  // Initialize the total fees counter
+
+            // Iterate over all flights and sum up their respective fees
             foreach (var flight in Flights.Values)
             {
-                totalFees += flight.CalculateFees();  // Polymorphism calls the overridden CalculateFees method
+                totalFees += flight.CalculateFees();  // Polymorphism calls the overridden CalculateFees method in the flight class
             }
 
-            // Apply promotions and discounts
-            int arrivalDepartureCount = 0;
-            int flightsBefore11AMOrAfter9PM = 0;
-            int flightsFromDXB_BKK_NRT = 0;
-
-            foreach (var flight in Flights.Values)
-            {
-                // Conditions for promotions and discounts
-                if (flight.Destination == "Singapore (SIN)" || flight.Origin == "Singapore (SIN)")
-                    arrivalDepartureCount++;
-                if (flight.ExpectedTime.Hour < 11 || flight.ExpectedTime.Hour > 21)
-                    flightsBefore11AMOrAfter9PM++;
-                if (flight.Origin == "Dubai (DXB)" || flight.Origin == "Bangkok (BKK)" || flight.Origin == "Tokyo (NRT)")
-                    flightsFromDXB_BKK_NRT++;
-            }
-
-            // Apply promotion-based discounts
-            totalFees -= 350 * (arrivalDepartureCount / 3);  // Discount for every 3 arriving/departing flights
-            totalFees -= 110 * flightsBefore11AMOrAfter9PM;  // Discount for flights before 11 AM or after 9 PM
-            totalFees -= 25 * flightsFromDXB_BKK_NRT;  // Discount for flights from DXB, BKK, or NRT
-
-            // Additional discount for airlines with more than 5 flights
-            if (Flights.Count > 5)
-            {
-                totalFees -= totalFees * 0.03;  // 3% off total fees
-            }
-
-            return totalFees;
+            return totalFees; // Return the total fees for the airline
         }
 
+        // Method to remove a flight from the airline's flight collection
         public bool RemoveFlight(Flight flight)
         {
+            // Check if the flight exists in the collection
             if (Flights.ContainsKey(flight.FlightNumber))
             {
-                Flights.Remove(flight.FlightNumber);
-                return true;
+                Flights.Remove(flight.FlightNumber); // Remove the flight by its flight number
+                return true; // Indicate that the flight was removed successfully
             }
-            return false;  // Return false if flight does not exist
+            return false;  // Return false if the flight does not exist in the collection
         }
 
         public override string ToString()
