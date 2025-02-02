@@ -12,12 +12,14 @@ using System.Threading.Tasks;
 
 namespace S10266823_PRG2Assignment
 {
-    class NORMFlight : Flight
+    public class NORMFlight : Flight
     {
-        public NORMFlight(string flightNumber, string origin, string destination, DateTime expectedTime) : base(flightNumber, origin, destination, expectedTime) { }
-        public double CalculateFees()
+        public NORMFlight(string flightNumber, string origin, string destination, DateTime expectedTime)
+            : base(flightNumber, origin, destination, expectedTime) { }
+
+        public override double CalculateFees()
         {
-            return base.CalculateFees();
+            return base.CalculateFees();  // Return base fees without adding anything extra
         }
 
         public override string ToString()
