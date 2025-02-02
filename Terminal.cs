@@ -39,23 +39,30 @@ namespace S10266823_PRG2Assignment
             return false; // Prevent duplicate airline entries
         }
 
+        // Method to retrieve the airline associated with a specific flight number
         public Airline GetAirlineFromFlight(string flightNumber)
         {
+            // Iterate through all airlines
             foreach (var airline in Airlines.Values)
             {
+                // Check if the airline has the flight number in its collection
                 if (airline.Flights.ContainsKey(flightNumber))
-                    return airline;
+                    return airline;  // Return the airline if it contains the flight
             }
-            return null;
+            return null;  // Return null if no airline with the flight number is found
         }
 
+        // Method to print the total fees for each airline
         public void PrintAirLineFees()
         {
+            // Iterate through all airlines and print their names and total fees
             foreach (var airline in Airlines.Values)
             {
+                // Print airline name and its total fees by calling the CalculateFees method
                 Console.WriteLine($"Airline: {airline.Name}, Total Fees: ${airline.CalculateFees()}");
             }
         }
+
 
         public override string ToString()
         {
