@@ -34,10 +34,7 @@ namespace S10266823_PRG2Assignment
         {
             if (Flight == null) return 0; // No flight assigned to this gate
 
-            double gateFee = 300;
-            if (Flight is CFFTFlight) gateFee += 150;
-            if (Flight is DDJBFlight) gateFee += 300;
-            if (Flight is LWTTFlight) gateFee += 500;
+            double gateFee = 300; // Base gate fee
 
             return gateFee;
         }
