@@ -12,13 +12,14 @@ using System.Threading.Tasks;
 
 namespace S10266823_PRG2Assignment
 {
-    class Flight : IComparable<Flight>
+    public class Flight : IComparable<Flight>
     {
         public string FlightNumber { get; set; }
         public string Origin { get; set; }
         public string Destination { get; set; }
         public DateTime ExpectedTime { get; set; }
         public string Status { get; set; } = "On Time";
+        public string BoardingGate { get; set; }  // New property to track boarding gate
 
         public Flight(string flightNumber, string origin, string destination, DateTime expectedTime)
         {
@@ -27,32 +28,40 @@ namespace S10266823_PRG2Assignment
             Destination = destination;
             ExpectedTime = expectedTime;
         }
+
         public virtual double CalculateFees()
         {
+            double fees = 0;
+
+            // Check if it's an arriving or departing flight to/from Singapore
             if (Destination == "Singapore (SIN)")
             {
-                return 500;
+                fees += 500;  // Arriving Flight
             }
             else if (Origin == "Singapore (SIN)")
             {
-                return 800;
+                fees += 800;  // Departing Flight
             }
-            else
+
+            // Add Boarding Gate Base Fee if a Boarding Gate is assigned
+            if (!string.IsNullOrEmpty(BoardingGate))
             {
-                return 0;
+                fees += 300;  // Boarding Gate Fee
             }
+
+            return fees;
         }
 
         public int CompareTo(Flight other)
         {
-        if (other == null) return 1;
-        return this.ExpectedTime.CompareTo(other.ExpectedTime);
+            if (other == null) return 1;
+            return this.ExpectedTime.CompareTo(other.ExpectedTime);
         }
 
         public override string ToString()
         {
-            return $"Flight Number: {FlightNumber} \tOrigin: {Origin} \nDestination: {Destination} \tExpected Time: {ExpectedTime} ";
-
+            return $"Flight Number: {FlightNumber} \tOrigin: {Origin} \nDestination: {Destination} \tExpected Time: {ExpectedTime} " +
+                   $"Boarding Gate: {BoardingGate}";
         }
     }
 }
